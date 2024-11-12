@@ -1,7 +1,0 @@
-# Unignore the folder itself to make it visible in the repository
-!Integrative_Activity_General/
-!Franco_IA/
-!Pedro_IA/
-!Samperio_IA/
-!Marco_IA/
-# Ignore specific subfolders and files within Integrative_Activity_General using its own .gitignore file
