@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &8455180025740233470
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 16.33
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.18343347
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -60.31319
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_Name
+      value: Krabby Car
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369981551560109333, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_DirtyAABB
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369981551560109333, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_AABB.m_Center.x
+      value: -0.000017809216
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369981551560109333, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_AABB.m_Center.y
+      value: 0.00019102357
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369981551560109333, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_AABB.m_Center.z
+      value: 0.0040512322
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369981551560109333, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_AABB.m_Extent.x
+      value: 0.009825658
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369981551560109333, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_AABB.m_Extent.y
+      value: 0.009998877
+      objectReference: {fileID: 0}
+    - target: {fileID: 1369981551560109333, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
+      propertyPath: m_AABB.m_Extent.z
+      value: 0.0028297533
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fc380f3bf44b59947b07daae3a094dff, type: 3}
