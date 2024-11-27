@@ -5,15 +5,15 @@ using UnityEngine.Networking;
 
 public class WebClient : MonoBehaviour
 {
-    public MovimientoCoches movimientoCoches; // Referencia al script de coches
-    public float timeToUpdate = 5f;          // Tiempo entre actualizaciones
+    public Turn turnScript; // Referencia al script Turn para controlar el coche 7
+    public float timeToUpdate = 5f; // Tiempo entre actualizaciones
     private float timer;
 
     void Start()
     {
-        if (movimientoCoches == null)
+        if (turnScript == null)
         {
-            movimientoCoches = GetComponent<MovimientoCoches>();
+            turnScript = GetComponent<Turn>();
         }
         StartCoroutine(RequestPositions());
     }
@@ -48,18 +48,57 @@ public class WebClient : MonoBehaviour
                 string txt = www.downloadHandler.text;
                 Debug.Log($"Recibido: {txt}");
 
-                // Deserializar JSON en una lista de posiciones
+                // Procesar y actualizar la ruta del coche 7
                 List<Vector3> nuevasPosiciones = ProcesarDatos(txt);
-                movimientoCoches.ActualizarPosicionesLlegada(nuevasPosiciones);
+                if (turnScript != null)
+                {
+                    //turnScript.ActualizarRuta(nuevasPosiciones); // Actualizar la ruta del coche 7
+                }
             }
         }
     }
 
-    // Método ficticio para procesar datos recibidos del servidor
+    // Método para procesar datos recibidos del servidor y convertirlos a una lista de Vector3
     private List<Vector3> ProcesarDatos(string json)
     {
-        // Aquí deserializarías el JSON a una lista de Vector3
-        // Por ahora, devolvemos una lista vacía como ejemplo
-        return new List<Vector3>();
+        List<Vector3> posiciones = new List<Vector3>();
+
+        // Deserializar el JSON en una lista de posiciones
+        try
+        {
+            PositionList data = JsonUtility.FromJson<PositionList>(json);
+            if (data != null && data.positions != null)
+            {
+                foreach (var item in data.positions)
+                {
+                    posiciones.Add(new Vector3(item.x, item.y, item.z));
+                }
+            }
+            else
+            {
+                Debug.LogWarning("JSON vacío o estructura no válida.");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error al procesar el JSON: {e.Message}");
+        }
+
+        return posiciones;
+    }
+
+    // Clases auxiliares para deserialización de JSON
+    [System.Serializable]
+    public class PositionData
+    {
+        public float x;
+        public float y;
+        public float z;
+    }
+
+    [System.Serializable]
+    public class PositionList
+    {
+        public List<PositionData> positions;
     }
 }
