@@ -36,8 +36,12 @@ public static class VecOps
         m[0, 3] = t.x;
         m[1, 3] = t.y;
         m[2, 3] = t.z;
+
+        // Depura el resultado de la matriz de traslación
+        Debug.Log($"TranslateM: Translation Vector: {t} | Matrix: {m}");
         return m;
     }
+
 
     public static Matrix4x4 ScaleM(Vector3 scale)
     {

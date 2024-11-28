@@ -24,62 +24,100 @@ public class Turn : MonoBehaviour
             return;
         }
 
-        // Obtener los vértices originales del coche asignado
+        if (path == null || path.Count == 0)
+        {
+            Debug.LogError("Path no está inicializado o está vacío.");
+            return;
+        }
+
         originals = new List<Vector3>(car.GetComponent<MeshFilter>().mesh.vertices);
+
+        // Inicializa la posición inicial
         mem = VecOps.TranslateM(path[index]);
         tra = VecOps.TranslateM(new Vector3(0, 0, -0.1f));
-        m = Matrix4x4.identity;
+        rot = Matrix4x4.identity;
+        Sca = Matrix4x4.identity;
+
+        Debug.Log($"Initial Matrix mem: {mem}");
+        Debug.Log($"Initial Translation Matrix tra: {tra}");
+        Debug.Log($"Initial Rotation Matrix rot: {rot}");
+        Debug.Log($"Initial Scale Matrix Sca: {Sca}");
     }
+
 
     void Update()
     {
         if (car == null) return; // Asegúrate de que el coche esté asignado
 
+        // Depura el estado inicial de 'mem'
+        Debug.Log($"Matrix mem (start of Update): {mem}");
+
         Vector3 currPos = new Vector3(mem[0, 3], mem[1, 3], mem[2, 3]);
         Debug.Log($"Current Position: {currPos} | Index: {index}");
 
-        if (!corner)
+        // Verifica que haya más puntos en 'path'
+        if (index + 1 >= path.Count)
         {
-            Vector3 nextPath = path[index + 1];
-            if (VecOps.Magnitude(nextPath - currPos) <= 0.01f)
-            {
-                Debug.Log($"Reached path point: {nextPath}. Advancing to index {index + 1}");
-                index++;
-                Vector3 prevPath = path[index - 1];
-                if (prevPath.x != nextPath.x || prevPath.y != nextPath.y)
-                {
-                    corner = true;
-                    pivot = new Vector3((nextPath.x - prevPath.x) / 2.0f, 0, (nextPath.z - prevPath.z) / 2.0f);
-                    Debug.Log($"Corner detected. Calculated pivot: {pivot}");
-                    tra = Matrix4x4.identity;
-                }
-            }
+            Debug.LogError("Index fuera de rango. Final de la ruta.");
+            return;
         }
-        else
+
+        Vector3 nextPath = path[index + 1];
+        float distanceToNextPath = VecOps.Magnitude(nextPath - currPos);
+        Debug.Log($"Distance to next path point: {distanceToNextPath}");
+
+        if (distanceToNextPath <= 0.1f) // Ajusta el umbral según el tamaño del paso
         {
-            tra = Matrix4x4.identity;
-            if (rotCounter < 90)
-            {
-                Debug.Log($"Rotating around pivot: {pivot} | Rotation Step: {rotCounter}");
-                Matrix4x4 mpiv = VecOps.TranslateM(pivot);
-                Matrix4x4 Mpneg = VecOps.TranslateM(-pivot);
-                Matrix4x4 rotM = VecOps.RotateYM(rotCounter);
-                Matrix4x4 Tc = VecOps.TranslateM(currPos);
-                rot = mpiv * rotM * Mpneg * Tc;
-                rotCounter++;
-            }
-            else
-            {
-                Debug.Log($"Finished rotation at index {index}. Resetting rotation counter.");
-                rotCounter = 0;
-                corner = false;
-                index++;
-                rot = Matrix4x4.identity;
-                tra = VecOps.TranslateM(new Vector3(0, 0, -0.1f));
-            }
+            Debug.Log($"Reached path point: {nextPath}. Advancing to index {index + 1}");
+            index++;
+            corner = false; // Reinicia el estado para permitir movimiento hacia el nuevo punto
+            return; // Sal del ciclo actual y espera al siguiente frame
         }
-        m = mem * tra * rot * Sca;
-        car.GetComponent<MeshFilter>().mesh.vertices = VecOps.ApplyTransform(originals, m).ToArray();
-        mem = mem * tra * rot;
+
+        // Calcula la dirección hacia el siguiente punto
+        Vector3 direction = VecOps.Normalize(nextPath - currPos);
+        Debug.Log($"Direction towards next path point: {direction}");
+
+        // Actualiza la traslación usando la dirección y un paso fijo
+        float step = 0.1f; // Ajusta el tamaño del paso según la velocidad deseada
+        tra = VecOps.TranslateM(direction * step);
+        Debug.Log($"Updated Translation Matrix tra: {tra}");
+
+        // Depura matrices de transformación
+        Debug.Log($"Rotation Matrix rot: {rot}");
+        Debug.Log($"Scale Matrix Sca: {Sca}");
+
+        // Acumula transformaciones en 'm'
+        Matrix4x4 nextM = mem * tra * rot * Sca;
+        if (nextM == Matrix4x4.zero)
+        {
+            Debug.LogError("Matrix m se convirtió en cero.");
+            return;
+        }
+        m = nextM;
+
+        // Depura el estado de 'm'
+        Debug.Log($"Matrix m (final transformation): {m}");
+
+        // Aplica la transformación al coche
+        List<Vector3> transformedVertices = VecOps.ApplyTransform(originals, m);
+        if (transformedVertices.Count == 0)
+        {
+            Debug.LogError("La transformación no generó vértices.");
+            return;
+        }
+        car.GetComponent<MeshFilter>().mesh.vertices = transformedVertices.ToArray();
+
+        // Acumula en 'mem'
+        Matrix4x4 nextMem = mem * tra * rot;
+        if (nextMem == Matrix4x4.zero)
+        {
+            Debug.LogError("Matrix mem se convirtió en cero después de acumulación.");
+            return;
+        }
+        mem = nextMem;
+
+        // Depura el estado final de 'mem'
+        Debug.Log($"Matrix mem (end of Update): {mem}");
     }
 }
