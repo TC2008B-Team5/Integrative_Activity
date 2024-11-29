@@ -7,10 +7,13 @@ using Newtonsoft.Json;
 public class FlaskConnector : MonoBehaviour
 {
     private float timer = 0f;
-    private float timeToUpdate = 5f;
+    // Adjusted update time to match animation duration
+    private float timeToUpdate = 16f; 
     private List<StepData> positionsOverTime;
     public GameObject carPrefab;
     private Dictionary<int, GameObject> cars = new Dictionary<int, GameObject>();
+
+    private bool isAnimating = false;
 
     void Update()
     {
@@ -41,6 +44,8 @@ public class FlaskConnector : MonoBehaviour
             else
             {
                 string jsonResponse = www.downloadHandler.text;
+                //Debug.Log("Raw JSON response: ");
+                //Debug.Log(jsonResponse);
                 positionsOverTime = ParsePositions(jsonResponse);
                 Debug.Log("Received car positions over time");
                 InitializeOrUpdateCars();
@@ -56,22 +61,40 @@ public class FlaskConnector : MonoBehaviour
 
     void InitializeOrUpdateCars()
     {
-        if (positionsOverTime == null || positionsOverTime.Count == 0) return;
+        if (positionsOverTime == null || positionsOverTime.Count == 0)
+        {
+            Debug.Log("No positions to animate.");
+            return;
+        }
 
-        StartCoroutine(AnimateCars());
+        if (!isAnimating)
+        {
+            Debug.Log("Starting animation.");
+            StartCoroutine(AnimateCars());
+        }
+        else
+        {
+            Debug.Log("Animation is already running. Skipping new animation.");
+        }
     }
 
     IEnumerator AnimateCars()
     {
+        isAnimating = true;
+
         foreach (StepData step in positionsOverTime)
         {
+            Debug.Log($"Animating step {step.step}");
+
             foreach (CarData carData in step.cars)
             {
+                Debug.Log($"At step {step.step}, car {carData.id} at position ({carData.position[0]}, {carData.position[1]})");
+
                 if (!cars.ContainsKey(carData.id))
                 {
                     Debug.Log($"Creating car with id {carData.id}");
                     Vector3 initialPosition = new Vector3(carData.position[0], 0, carData.position[1]);
-                    Debug.Log($"Initial position: {initialPosition}");
+                    Debug.Log($"Initial position for car {carData.id}: {initialPosition}");
                     GameObject car = Instantiate(carPrefab, initialPosition, Quaternion.identity);
                     cars.Add(carData.id, car);
                 }
@@ -83,8 +106,12 @@ public class FlaskConnector : MonoBehaviour
                     StartCoroutine(MoveCar(car, targetPosition));
                 }
             }
+
             yield return new WaitForSeconds(0.5f);
         }
+
+        isAnimating = false;
+        positionsOverTime.Clear(); // Clear data after animation completes
     }
 
     IEnumerator MoveCar(GameObject car, Vector3 targetPosition)
@@ -95,7 +122,7 @@ public class FlaskConnector : MonoBehaviour
 
         while (elapsedTime < duration)
         {
-            car.transform.position = Vector3.Lerp(startingPosition, targetPosition, (elapsedTime / duration));
+            car.transform.position = Vector3.Lerp(startingPosition, targetPosition, elapsedTime / duration);
             elapsedTime += Time.deltaTime;
             yield return null;
         }
